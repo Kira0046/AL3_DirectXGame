@@ -1,8 +1,8 @@
 ﻿#pragma once
 
 #include "Audio.h"
-#include "DirectXCommon.h"
 #include "DebugText.h"
+#include "DirectXCommon.h"
 #include "Input.h"
 #include "Model.h"
 #include "SafeDelete.h"
@@ -51,15 +51,20 @@ class GameScene {
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	void PlayerUpdate();
+
 	int32_t value_ = 0;
-	
-	 uint32_t textureHandle_ = 0;
 
-	 Sprite* sprite_ = nullptr;
+	uint32_t textureHandlePlayer_ = 0;
+	uint32_t textureHandleBG_ = 0;
+	uint32_t textureHandlestage_ = 0;
 
-	 Model* model_ = nullptr;
+	Sprite* spriteBG_ = nullptr;
 
-	 WorldTransform worldTransform_;
-	 ViewProjection viewProjection_;
+	Model* modelStage_ = nullptr;
+	Model* modelPlayer_ = nullptr;
 
+	WorldTransform worldTransformStage_;
+	WorldTransform worldTransformPlayer_;
+	ViewProjection viewProjection_;
 };

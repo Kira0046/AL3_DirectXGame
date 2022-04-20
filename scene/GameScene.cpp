@@ -7,8 +7,9 @@ using namespace DirectX;
 GameScene::GameScene() {}
 
 GameScene::~GameScene() {
-	delete sprite_;
-	delete model_;
+	delete spriteBG_;
+	delete modelPlayer_;
+	delete modelStage_;
 }
 
 void GameScene::Initialize() {
@@ -17,26 +18,54 @@ void GameScene::Initialize() {
 	input_ = Input::GetInstance();
 	audio_ = Audio::GetInstance();
 	debugText_ = DebugText::GetInstance();
-	textureHandle_ = TextureManager::Load("red.jpg");
-	sprite_ = Sprite::Create(textureHandle_, {100, 50});
-	model_ = Model::Create();
+	//テクスチャ読み込み
+	textureHandleBG_ = TextureManager::Load("bg.jpg");
+	textureHandlestage_ = TextureManager::Load("stage.jpg");
+	textureHandlePlayer_ = TextureManager::Load("player.png");
+	//背景スプライト生成
+	spriteBG_ = Sprite::Create(textureHandleBG_, {0, 0});
+	//プレイヤー
+	modelPlayer_ = Model::Create();
+	worldTransformPlayer_.scale_ = {0.5f, 0.5f, 0.5f};
+	worldTransformPlayer_.Initialize();
+	//ステージ
+	modelStage_ = Model::Create();
+	worldTransformStage_.translation_ = {0, -1.5f, 0};
+	worldTransformStage_.scale_ = {4.5f, 1, 40};
+	worldTransformStage_.Initialize();
 
-	worldTransform_.Initialize();
+	//カメラ
+	viewProjection_.eye = {0, 1, -6};
+	viewProjection_.target = {0, 1, 0};
 	viewProjection_.Initialize();
 }
 
 void GameScene::Update() {
-	XMFLOAT2 position = sprite_->GetPosition();
-	position.x += 2.0f;
-	position.y += 1.0f;
 
-	sprite_->SetPosition(position);
+	PlayerUpdate();
+	// value_++;
+	// std::string strDebug = std::string("Value:") + std::to_string(value_);
+	// debugText_->Print(strDebug, 50, 50, 1.0f);
+}
 
-	value_++;
-
-	std::string strDebug = std::string("Value:") + std::to_string(value_);
-
-	debugText_->Print(strDebug, 50, 50, 1.0f);
+void GameScene::PlayerUpdate() { 
+	//右移動
+	if (input_->PushKey(DIK_RIGHT)) {
+		worldTransformPlayer_.translation_.x += 0.1f;
+		//移動制限
+		if (worldTransformPlayer_.translation_.x > 4) {
+			worldTransformPlayer_.translation_.x = 4;
+		}
+	}
+	//左移動
+	if (input_->PushKey(DIK_LEFT)) {
+		worldTransformPlayer_.translation_.x -= 0.1f;
+		//移動制限
+		if (worldTransformPlayer_.translation_.x < -4) {
+			worldTransformPlayer_.translation_.x = -4;
+		}
+	}
+	worldTransformPlayer_.UpdateMatrix();
 }
 
 void GameScene::Draw() {
@@ -51,7 +80,7 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに背景スプライトの描画処理を追加できる
 	/// </summary>
-
+	spriteBG_->Draw();
 	// スプライト描画後処理
 	Sprite::PostDraw();
 	// 深度バッファクリア
@@ -66,8 +95,9 @@ void GameScene::Draw() {
 	/// ここに3Dオブジェクトの描画処理を追加できる
 	/// </summary>
 
-	model_->Draw(worldTransform_, viewProjection_, textureHandle_);
+	modelStage_->Draw(worldTransformStage_, viewProjection_, textureHandlestage_);
 
+	modelPlayer_->Draw(worldTransformPlayer_, viewProjection_, textureHandlePlayer_);
 	// 3Dオブジェクト描画後処理
 	Model::PostDraw();
 #pragma endregion
@@ -79,7 +109,6 @@ void GameScene::Draw() {
 	/// <summary>
 	/// ここに前景スプライトの描画処理を追加できる
 	/// </summary>
-	sprite_->Draw();
 
 	// デバッグテキストの描画
 	debugText_->DrawAll(commandList);
