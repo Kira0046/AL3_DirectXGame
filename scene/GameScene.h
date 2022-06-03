@@ -51,6 +51,10 @@ class GameScene {
 	/// <summary>
 	/// ゲームシーン用
 	/// </summary>
+	
+	int sceneMode_ = 0;//0:タイトル , 1:ゲームプレイ,2:ゲームオーバー
+
+	////////////////////////////////////:ゲーム中
 	//プレイヤー更新宣言
 	void PlayerUpdate();
 	//ビーム更新宣言
@@ -98,4 +102,34 @@ class GameScene {
 	WorldTransform worldTransformBeam_;
 	WorldTransform worldTransformEnemy_;
 	ViewProjection viewProjection_;
+
+	
+	void GamePlayUpdate();
+	void GamePlayDraw3D();
+	void GamePlayDraw2DBack();
+	void GamePlayDraw2DNear();
+
+
+	//////////////////////////////:タイトル
+	void TitleUpdate();
+	void TitleDraw2DNear();
+	//タイトルスプライト
+	uint32_t textureHandleTitle_ = 0;
+	Sprite* spriteTitle_ = nullptr;
+	
+	uint32_t textureHandleEnter_ = 0;
+	Sprite* spriteEnter_ = nullptr;
+	//タイマー
+	int gameTimer_ = 0;
+
+	/////////////////////////////:ゲームオーバー
+	void GameOverUpdate();
+	void GameOverDraw2DNear();
+	void GameOverDraw2DBack();
+	void GameOverDraw3D();
+	//ゲーム初期化
+	void GamePlayStart();
+	//ゲームオーバースプライト
+	uint32_t textureHandleGameOver_ = 0;
+	Sprite* spriteGameOver_ = nullptr;
 };
