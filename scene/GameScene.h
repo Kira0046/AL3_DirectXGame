@@ -74,13 +74,17 @@ class GameScene {
 
 
 	//ビーム存在フラグ
-	int Beamflag_ = 0;
-	//的存在フラグ
-	int Enemyflag_ = 1;
+	int Beamflag_[10] = {};
+	//敵存在フラグ
+	int Enemyflag_[10] = {};
 	//スコア
 	int gameScore_ = 0;
 	//プレイヤーライフ
 	int playerLife_ = 3;
+	//ビーム発射タイマー
+	int beamTimer_ = 0;
+	//敵のスピード
+	float enemySpeed_[10] = {};
 
 	/*int32_t value_ = 0;*/
 	//テクスチャ宣言
@@ -99,8 +103,8 @@ class GameScene {
 	//座標宣言
 	WorldTransform worldTransformStage_;
 	WorldTransform worldTransformPlayer_;
-	WorldTransform worldTransformBeam_;
-	WorldTransform worldTransformEnemy_;
+	WorldTransform worldTransformBeam_[10];
+	WorldTransform worldTransformEnemy_[10];
 	ViewProjection viewProjection_;
 
 	
