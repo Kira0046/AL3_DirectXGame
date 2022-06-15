@@ -107,7 +107,15 @@ class GameScene {
 	WorldTransform worldTransformEnemy_[10];
 	ViewProjection viewProjection_;
 
-	
+	//サウンド
+	uint32_t soundDataHandleTitleBGM_ = 0;
+	uint32_t soundDataHandleGamePlayBGM_ = 0;
+	uint32_t soundDataHandleGameOverBGM_ = 0;
+	uint32_t soundDataHandleEnemyHitSE_ = 0;
+	uint32_t soundDataHandlePlayerHitSE_ = 0;
+	uint32_t voiceHandleBGM_ = 0;
+
+	//関数
 	void GamePlayUpdate();
 	void GamePlayDraw3D();
 	void GamePlayDraw2DBack();
