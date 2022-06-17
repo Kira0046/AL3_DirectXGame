@@ -65,6 +65,9 @@ class GameScene {
 	void EnemyUpdate();
 	void EnemyMove();
 	void EnemyBorn();
+	void EnemyJump();
+	//ステージ更新宣言
+	void StageUpdate();
 	//当たり判定宣言
 	void Collision();
 	//プレイヤー、敵当たり判定宣言
@@ -85,6 +88,7 @@ class GameScene {
 	int beamTimer_ = 0;
 	//敵のスピード
 	float enemySpeed_[10] = {};
+	float enemyJumpSpeed_[10] = {1.0f};
 
 	/*int32_t value_ = 0;*/
 	//テクスチャ宣言
@@ -101,7 +105,7 @@ class GameScene {
 	Model* modelBeam_ = nullptr;
 	Model* modelEnemy_ = nullptr;
 	//座標宣言
-	WorldTransform worldTransformStage_;
+	WorldTransform worldTransformStage_[20];
 	WorldTransform worldTransformPlayer_;
 	WorldTransform worldTransformBeam_[10];
 	WorldTransform worldTransformEnemy_[10];
