@@ -89,6 +89,8 @@ class GameScene {
 	//敵のスピード
 	float enemySpeed_[10] = {};
 	float enemyJumpSpeed_[10] = {1.0f};
+	//プレイヤー点滅
+	int playerTimer_ = 0;
 
 	/*int32_t value_ = 0;*/
 	//テクスチャ宣言
@@ -97,8 +99,14 @@ class GameScene {
 	uint32_t textureHandlestage_ = 0;
 	uint32_t textureHandleBeam_ = 0;
 	uint32_t textureHandleEnemy_ = 0;
+	uint32_t textureHandleNumber_ = 0;
+	uint32_t textureHandleScore_ = 0;
+	uint32_t textureHandlePlayerLife_ = 0;
 	//スプライト宣言
+	Sprite* spritePlayerLife_[3] = {};
 	Sprite* spriteBG_ = nullptr;
+	Sprite* spriteNumber_[5] = {};
+	Sprite* spriteScore_ = nullptr;
 	//モデル宣言
 	Model* modelStage_ = nullptr;
 	Model* modelPlayer_ = nullptr;
@@ -124,6 +132,7 @@ class GameScene {
 	void GamePlayDraw3D();
 	void GamePlayDraw2DBack();
 	void GamePlayDraw2DNear();
+	void DrawScore();
 
 
 	//////////////////////////////:タイトル

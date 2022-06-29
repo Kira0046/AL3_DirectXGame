@@ -10,6 +10,13 @@ GameScene::GameScene() {}
 GameScene::~GameScene() {
 	delete spriteBG_;
 	delete spriteTitle_;
+	for (int i = 0; i < 5; i++) {
+		delete spriteNumber_[i];
+	}
+	for (int i = 0; i < 3; i++) {
+		delete spritePlayerLife_[i];
+	}
+	delete spriteScore_;
 	delete modelPlayer_;
 	delete modelStage_;
 	delete modelBeam_;
@@ -46,7 +53,10 @@ void GameScene::Initialize() {
 	modelPlayer_ = Model::Create();
 	worldTransformPlayer_.scale_ = {0.5f, 0.5f, 0.5f};
 	worldTransformPlayer_.Initialize();
-
+	textureHandlePlayerLife_ = TextureManager::Load("playerLife.png");
+	for (int i = 0; i < 3; i++) {
+		spritePlayerLife_[i] = Sprite::Create(textureHandlePlayerLife_, {900.0f + i * 50, 5.0f});
+	}
 	//ステージ
 	modelStage_ = Model::Create();
 	for (int i = 0; i < 20; i++) {
@@ -74,6 +84,13 @@ void GameScene::Initialize() {
 	viewProjection_.eye = {0, 1, -6};
 	viewProjection_.target = {0, 1, 0};
 	viewProjection_.Initialize();
+	//スコア
+	textureHandleNumber_ = TextureManager::Load("number.png");
+	for (int i = 0; i < 5; i++) {
+		spriteNumber_[i] = Sprite::Create(textureHandleNumber_, {300.0f + i * 26, 0});
+	}
+	textureHandleScore_ = TextureManager::Load("score.png");
+	spriteScore_ = Sprite::Create(textureHandleScore_, {150.0f,0});
 	//乱数初期化
 	srand(time(NULL));
 	/////////////////////////////////////////////////:タイトル
@@ -211,7 +228,9 @@ void GameScene::GamePlayDraw3D() {
 		modelStage_->Draw(worldTransformStage_[i], viewProjection_, textureHandlestage_);
 	}
 	//プレイヤー描画
-	modelPlayer_->Draw(worldTransformPlayer_, viewProjection_, textureHandlePlayer_);
+	if (playerTimer_ % 4 < 2) {
+		modelPlayer_->Draw(worldTransformPlayer_, viewProjection_, textureHandlePlayer_);
+	}
 	//ビーム描画
 	for (int i = 0; i < 10; i++) {
 
@@ -232,14 +251,20 @@ void GameScene::GamePlayDraw2DBack() {
 }
 
 void GameScene::GamePlayDraw2DNear() {
+	DrawScore();
 	//ゲームスコア
-	char strS[100];
+	/*char strS[100];
 	sprintf_s(strS, "SCORE:%d", gameScore_);
-	debugText_->Print(strS, 200, 10, 2);
+	debugText_->Print(strS, 200, 10, 2);*/
 	//プレイヤーライフ
-	char strL[100];
+	/*char strL[100];
 	sprintf_s(strL, "LIFE:%d", playerLife_);
-	debugText_->Print(strL, 1000, 10, 2);
+	debugText_->Print(strL, 1000, 10, 2);*/
+
+	for (int i = 0; i < playerLife_; i++) {
+		spritePlayerLife_[i]->Draw();
+	}
+
 }
 
 
@@ -263,6 +288,10 @@ void GameScene::PlayerUpdate() {
 		if (worldTransformPlayer_.translation_.x < -4) {
 			worldTransformPlayer_.translation_.x = -4;
 		}
+	}
+	//衝突時点滅タイマー現象
+	if (playerTimer_ > 0) {
+		playerTimer_ -= 1;
 	}
 	worldTransformPlayer_.UpdateMatrix();
 }
@@ -428,6 +457,7 @@ void GameScene::CollisionPlayerEnemy() {
 			if (dx < 1 && dz < 1) {
 				Enemyflag_[i] = 0;
 				playerLife_ -= 1;
+				playerTimer_ = 60;
 				audio_->PlayWave(soundDataHandlePlayerHitSE_);
 			}
 		}
@@ -463,6 +493,26 @@ void GameScene::CollisionBeamEnemy() {
 			}		
 		}
 	}
+}
+//スコア
+void GameScene::DrawScore() {
+
+	char eachNumber[5] = {};
+	int number = gameScore_;
+
+	int keta = 10000;
+	for (int i = 0; i < 5; i++) {
+		eachNumber[i] = number / keta;
+		number = number % keta;
+		keta = keta / 10;
+	}
+
+	for (int i = 0; i < 5; i++) {
+		spriteNumber_[i]->SetSize({32, 64});
+		spriteNumber_[i]->SetTextureRect({32.0f * eachNumber[i], 0}, {32, 64});
+		spriteNumber_[i]->Draw();
+	}
+	spriteScore_->Draw();
 }
 
 //////////////////////////////////////////////////////////////////////:ゲームタイトル
@@ -504,6 +554,8 @@ void GameScene::GamePlayStart() {
 	}
 	//タイマー
 	gameTimer_ = 0;
+	//点滅タイマー
+	playerTimer_ = 0;
 }
 
 //////////////////////////////////////////////////////////:ゲームオーバー
